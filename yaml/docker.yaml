@@ -1,24 +1,20 @@
-# a docker yaml featurecounts
-- scope: process
-  name: "featurecounts_p1"
-  container: "ubuntu:24.04"
-  environment: "docker"
-  var:
-    extra_args: ""
-    my_featurecounts_argument: "This is just a featurecounts."
-
-- scope: process
-  name: "featurecounts_p2"
-  container: "python:3.13-slim"
-  environment: "docker"
-  var:
-    map.file: "./test/data.txt"
-
-- scope: process
-  name: "featurecounts_p3"
-  container: "r-base:4.5.1"
-  environment: "docker"
-
 - scope: global
+  environment: "docker"
   var:
-    mk.output: "./test/test-output"
+    mk.featurecounts_output: "./test/test-output/featurecounts_output"
+    gtf: "./test/test-input/caenorhabditis_elegans.115.no.rRNA.gtf"
+    strand_file: "./test/test-input/.strandness.txt"
+
+- scope: process
+  name: "geneid"
+  var:
+    cpus: "2"
+    paired: ""
+    mapping_folder: './test/test-input/kallisto_output/'
+    
+- scope: process
+  name: "biotype"
+  var:
+    cpus: "2"
+    paired: ""
+    mapping_folder: './test/test-input/kallisto_output/'
