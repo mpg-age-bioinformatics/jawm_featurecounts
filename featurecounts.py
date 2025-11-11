@@ -57,7 +57,7 @@ cut -f 1,7 {{featurecounts_output}}/{{pair_id}}_biotype.featureCounts.txt | tail
         "mapping_folder":"Required to find the bams"
     },
     container="mpgagebioinformatics/subread:2.0.3",
-    manager_slurm={ "-c": 16, "--mem": "80GB", "-t": "6:00:00" }
+    manager_slurm={ "-c": 8, "--mem": "80GB", "-t": "6:00:00" }
 )
 
 headers=jawm.Process(
