@@ -9,6 +9,7 @@ if [[ -e "{{strand_file}}" ]] ; then strand=$(cat {{strand_file}} ) ; else stran
 echo ${strand}
 featureCounts -a {{gtf}} -T {{cpus}} -g gene_id -o {{featurecounts_output}}/{{pair_id}}_gene.featureCounts.txt {{paired}} -s ${strand} {{bam}}
 """,
+    var={"paired":""},
     desc={
         "strand_file":"",
         "gtf":"",
