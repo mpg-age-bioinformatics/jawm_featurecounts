@@ -3,7 +3,7 @@
   var:
     mk.featurecounts_output: "./test/test-output/featurecounts_output"
     map.gtf: "./test/test-input/caenorhabditis_elegans.115.no.rRNA.gtf"
-    map.strand_file: "./test/test-input/.strandness.txt"
+    map.strand: "./test/test-input/.strandness.txt"
     map.mapping_folder: './test/test-input/kallisto_output/'
 
 - scope: process

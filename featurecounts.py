@@ -3,15 +3,15 @@ import os
 
 geneid=jawm.Process(
     name="geneid",
-    when=lambda p: not os.path.isfile( os.path.join( p.var["featurecounts_output"] , p.var["pair_id"]+"_gene.featureCounts.txt" ) ) ,
+    when=lambda p: not os.path.isfile( os.path.join( p.var["featurecounts_output"] , p.var["pair_id"]+".gene.featureCounts.txt" ) ) ,
     script="""\
-if [[ -e "{{strand_file}}" ]] ; then strand=$(cat {{strand_file}} ) ; else strand="0" ; fi
+if [[ -e "{{strand}}" ]] ; then strand=$(cat {{strand}} ) ; else strand="{{strand}}" ; fi
 echo ${strand}
-featureCounts -a {{gtf}} -T {{cpus}} -g gene_id -o {{featurecounts_output}}/{{pair_id}}_gene.featureCounts.txt {{paired}} -s ${strand} {{bam}}
+featureCounts -a {{gtf}} -T {{cpus}} -g gene_id -o {{featurecounts_output}}/{{pair_id}}.gene.featureCounts.txt {{paired}} -s ${strand} {{bam}}
 """,
     var={"paired":""},
     desc={
-        "strand_file":"",
+        "strand":"",
         "gtf":"",
         "cpus": "",
         "featurecounts_output":"",
@@ -27,7 +27,7 @@ featureCounts -a {{gtf}} -T {{cpus}} -g gene_id -o {{featurecounts_output}}/{{pa
 
 biotype=jawm.Process(
     name="biotype",
-    when=lambda p: not os.path.isfile( os.path.join( p.var["featurecounts_output"] , p.var["pair_id"]+"_biotype_counts_mqc.txt" ) ) ,
+    when=lambda p: not os.path.isfile( os.path.join( p.var["featurecounts_output"] , p.var["pair_id"]+".biotype.featureCounts.txt" ) ) ,
     script="""\
 cat << 'EOF' > {{featurecounts_output}}/biotypes_header.txt
 # id: 'biotype-counts'
@@ -42,10 +42,12 @@ cat << 'EOF' > {{featurecounts_output}}/biotypes_header.txt
 #     xlab: "# Reads"
 #     cpswitch_counts_label: "Number of Reads
 EOF
-strand=$(cat {{strand_file}})
-featureCounts -a {{gtf}} -T {{cpus}} -g gene_biotype -o {{featurecounts_output}}/{{pair_id}}_biotype.featureCounts.txt {{paired}} -s ${strand} {{bam}}
-cp {{featurecounts_output}}/biotypes_header.txt {{featurecounts_output}}/{{pair_id}}_biotype_counts_mqc.txt
-cut -f 1,7 {{featurecounts_output}}/{{pair_id}}_biotype.featureCounts.txt | tail -n +3 | grep -v '^\\s' >> {{featurecounts_output}}/{{pair_id}}_biotype_counts_mqc.txt
+if [[ -e "{{strand}}" ]] ; then strand=$(cat {{strand}} ) ; else strand="{{strand}}" ; fi
+
+echo "featureCounts -a {{gtf}} -T {{cpus}} -g gene_biotype -o {{featurecounts_output}}/{{pair_id}}.biotype.featureCounts.txt {{paired}} -s ${strand} {{bam}}"q
+featureCounts -a {{gtf}} -T {{cpus}} -g gene_biotype -o {{featurecounts_output}}/{{pair_id}}.biotype.featureCounts.txt {{paired}} -s ${strand} {{bam}}
+cp {{featurecounts_output}}/biotypes_header.txt {{featurecounts_output}}/{{pair_id}}.biotype_counts_mqc.txt
+cut -f 1,7 {{featurecounts_output}}/{{pair_id}}.biotype.featureCounts.txt | tail -n +3 | grep -v '^\\s' >> {{featurecounts_output}}/{{pair_id}}.biotype_counts_mqc.txt
 """,
     desc={
         "cpus": "",
@@ -54,7 +56,7 @@ cut -f 1,7 {{featurecounts_output}}/{{pair_id}}_biotype.featureCounts.txt | tail
         "gtf":"",
         "pair_id":"",
         "paired":"",
-        "strand_file":"",
+        "strand":"",
         "mapping_folder":"Required to find the bams"
     },
     container="mpgagebioinformatics/subread:2.0.3",
@@ -74,17 +76,17 @@ import numpy as np
 files_path="{{featurecounts_output}}/"
 files=os.listdir(files_path)
 files=[s for s in files if "summary" not in s and "mqc" not in s]
-gene_files=[ s for s in files if s [-len("_gene.featureCounts.txt"):] == "_gene.featureCounts.txt" ]
-biotype_files=[ s for s in files if s[-len("_biotype.featureCounts.txt"):] == "_biotype.featureCounts.txt" ]
+gene_files=[ s for s in files if s [-len(".gene.featureCounts.txt"):] == ".gene.featureCounts.txt" ]
+biotype_files=[ s for s in files if s[-len(".biotype.featureCounts.txt"):] == ".biotype.featureCounts.txt" ]
 files=gene_files+biotype_files
 for f in files:
     file=pd.read_csv(files_path+f, sep="\\t")
     header=file.columns[0]
     file_=pd.read_csv(files_path+f, sep="\\t", comment="#")
 
-    if "_gene.featureCounts.txt" in f:
+    if ".gene.featureCounts.txt" in f:
         sample_name=f.split("_gene",1)[0]
-    elif "_biotype.featureCounts.txt" in f:
+    elif ".biotype.featureCounts.txt" in f:
         sample_name=f.split("_biotype",1)[0]
 
     file_=file_.rename(columns={"pseudoalignments.bam":sample_name})
