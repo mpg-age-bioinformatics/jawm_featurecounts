@@ -5,7 +5,7 @@ geneid=jawm.Process(
     name="geneid",
     when=lambda p: not os.path.isfile( os.path.join( p.var["featurecounts_output"] , p.var["pair_id"]+".gene.featureCounts.txt" ) ) ,
     script="""\
-if [[ -e "{{strand}}" ]] ; then strand=$(cat {{strand}} ) ; else strand="{{strand}}" ; fi
+if [ -f {{strand}} ] ; then strand=$(cat {{strand}} ) ; else strand="{{strand}}" ; fi
 echo ${strand}
 featureCounts -a {{gtf}} -T {{cpus}} -g gene_id -o {{featurecounts_output}}/{{pair_id}}.gene.featureCounts.txt {{paired}} -s ${strand} {{bam}}
 """,
@@ -42,7 +42,7 @@ cat << 'EOF' > {{featurecounts_output}}/biotypes_header.txt
 #     xlab: "# Reads"
 #     cpswitch_counts_label: "Number of Reads
 EOF
-if [[ -e "{{strand}}" ]] ; then strand=$(cat {{strand}} ) ; else strand="{{strand}}" ; fi
+if [ -f {{strand}} ] ; then strand=$(cat {{strand}} ) ; else strand="{{strand}}" ; fi
 
 echo "featureCounts -a {{gtf}} -T {{cpus}} -g gene_biotype -o {{featurecounts_output}}/{{pair_id}}.biotype.featureCounts.txt {{paired}} -s ${strand} {{bam}}"q
 featureCounts -a {{gtf}} -T {{cpus}} -g gene_biotype -o {{featurecounts_output}}/{{pair_id}}.biotype.featureCounts.txt {{paired}} -s ${strand} {{bam}}
