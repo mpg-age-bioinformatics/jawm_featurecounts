@@ -9,7 +9,9 @@ if [ -f {{strand}} ] ; then strand=$(cat {{strand}} ) ; else strand="{{strand}}"
 echo ${strand}
 featureCounts -a {{gtf}} -T {{cpus}} -g gene_id -o {{featurecounts_output}}/{{pair_id}}.gene.featureCounts.txt {{paired}} -s ${strand} {{bam}}
 """,
-    var={"paired":""},
+    var={
+        "paired":""
+        },
     desc={
         "strand":"",
         "gtf":"",
@@ -49,6 +51,9 @@ featureCounts -a {{gtf}} -T {{cpus}} -g gene_biotype -o {{featurecounts_output}}
 cp {{featurecounts_output}}/biotypes_header.txt {{featurecounts_output}}/{{pair_id}}.biotype_counts_mqc.txt
 cut -f 1,7 {{featurecounts_output}}/{{pair_id}}.biotype.featureCounts.txt | tail -n +3 | grep -v '^\\s' >> {{featurecounts_output}}/{{pair_id}}.biotype_counts_mqc.txt
 """,
+    var={
+        "paired":""
+    },
     desc={
         "cpus": "",
         "bam":"",
