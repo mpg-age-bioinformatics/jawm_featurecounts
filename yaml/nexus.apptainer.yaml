@@ -1,0 +1,11 @@
+- scope: process
+  name: geneid
+  container: /nexus/posix0/MAGE-flaski/service/images/jawm/subread-2.0.3.sif
+
+- scope: process
+  name: biotype
+  container: /nexus/posix0/MAGE-flaski/service/images/jawm/subread-2.0.3.sif
+
+- scope: process
+  name: headers
+  container: /nexus/posix0/MAGE-flaski/service/images/jawm/rnaseq.python-3.8-1.sif
