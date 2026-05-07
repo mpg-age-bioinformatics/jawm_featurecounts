@@ -19,5 +19,5 @@
     paired: ""
 
 - scope: hash
-  include: ./test/test-output/featurecounts_output/*.summary
+  include: ./test/test-output/featurecounts_output/*.biotype_counts_mqc.txt 
   overwrite: true # overwrite any existing hash already present on the logs folder
