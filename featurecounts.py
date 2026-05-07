@@ -153,5 +153,20 @@ if __name__ == "__main__":
 
     if workflow("test", workflows):
 
+        import os
+        mqc_files=os.listdir( var["featurecounts_output"] )
+        mqc_files=[ s for s in mqc_files if ".biotype_counts_mqc.txt" in s ]
+        # Print the list of found files
+        print("Found files:")
+        for f in mqc_files:
+            print(f"  {f}")
+
+        # Print the content of each file
+        for f in mqc_files:
+            filepath = os.path.join(var["featurecounts_output"], f)
+            print(f"\n--- Content of {f} ---")
+            with open(filepath, "r") as fh:
+                print(fh.read())
+    
         # for the test workflow we might also do something more
         print("Test completed.")
